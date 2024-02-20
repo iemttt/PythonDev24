@@ -1,8 +1,10 @@
 from cowsay import cowsay
 
-message = """
-The most remarkable thing about my mother is that for thirty years she served
-the family nothing but leftovers.  The original meal has never been found.
-		-- Calvin Trillin
-""".strip()
-print(cowsay(message))
+import argparse
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("message", type=str)
+    args = parser.parse_args()
+    message = args.message
+    print(cowsay(message, preset="l"))
