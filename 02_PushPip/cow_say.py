@@ -21,17 +21,21 @@ if __name__ == '__main__':
     parser.add_argument("-t", help="Tired mode", action="store_true")
     parser.add_argument("-w", help="Somewhat the opposite of -t", action="store_true")
     parser.add_argument("-y", help="Brings on the cow's youthful appearance", action="store_true")
+    parser.add_argument("-W", help="specifies roughly where the message should be wrapped. The default is equivalent to -W 40 i.e. wrap words at or before the 40th column.", type=int)
     parser.add_argument("message", type=str)
 
     args = parser.parse_args()
     preset = get_preset(args)
     eyes = args.e[:2] if args.e else Option.eyes
     tongue = args.T[:2] if args.T else Option.tongue
+    width = args.W if args.W else 40
     message = args.message
+    
     print(cowsay(
         message=message,
         preset=preset,
         eyes=eyes,
-        tongue=tongue
+        tongue=tongue,
+        width=width,
         )
     )
