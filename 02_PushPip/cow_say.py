@@ -11,7 +11,8 @@ def get_preset(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("-e", help="Select the appearance of the cow's eyes, in which case the first two characters of the argument string eye_string will be used", type=str)
+    parser.add_argument("-e", help="Select the appearance of the cow's eyes, in which case the first two characters of the argument string will be used", type=str)
+    parser.add_argument("-T", help="Select the appearance of the cow's tongue, in which case the first two characters of the argument string will be used", type=str)
     parser.add_argument("-b", help="Borg mode", action="store_true")
     parser.add_argument("-d", help="Dead mode", action="store_true")
     parser.add_argument("-g", help="Greedy mode", action="store_true")
@@ -25,5 +26,12 @@ if __name__ == '__main__':
     args = parser.parse_args()
     preset = get_preset(args)
     eyes = args.e[:2] if args.e else Option.eyes
+    tongue = args.T[:2] if args.T else Option.tongue
     message = args.message
-    print(cowsay(message, preset=preset, eyes=eyes))
+    print(cowsay(
+        message=message,
+        preset=preset,
+        eyes=eyes,
+        tongue=tongue
+        )
+    )
