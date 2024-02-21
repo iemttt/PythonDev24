@@ -1,4 +1,4 @@
-from cowsay import cowsay, Option
+from cowsay import cowsay, Option, list_cows
 
 import argparse
 from sys import stdin
@@ -25,8 +25,14 @@ if __name__ == '__main__':
     parser.add_argument("-y", help="Brings on the cow's youthful appearance", action="store_true")
     parser.add_argument("-W", help="specifies roughly where the message should be wrapped. The default is equivalent to -W 40 i.e. wrap words at or before the 40th column.", type=int)
     parser.add_argument("-n", help="If it is specified, the given message will not be word-wrapped", action="store_true")
+    parser.add_argument("-l", help="Lists all cows", action="store_true")
     parser.add_argument("message", type=str, nargs="?")
     args = parser.parse_args()
+
+    if args.l:
+        print("Cow files in cowsay-python:")
+        print(*list_cows())
+        exit()
     
     if args.message is None:
         message = stdin.read()
