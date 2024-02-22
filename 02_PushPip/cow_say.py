@@ -41,8 +41,8 @@ def get_cow(arg: str) -> Tuple[Optional[str], Optional[str]]:
 
 if __name__ == '__main__':
     parser: argparse.ArgumentParser = argparse.ArgumentParser()
-    parser.add_argument("-e", help="Select the appearance of the cow's eyes, in which case the first two characters of the argument string will be used", type=str)
-    parser.add_argument("-T", help="Select the appearance of the cow's tongue, in which case the first two characters of the argument string will be used", type=str)
+    parser.add_argument("-e", dest="eyes", help="Select the appearance of the cow's eyes, in which case the first two characters of the argument string will be used", type=str)
+    parser.add_argument("-T", dest="tongue", help="Select the appearance of the cow's tongue, in which case the first two characters of the argument string will be used", type=str)
     parser.add_argument("-b", help="Borg mode", action="store_true")
     parser.add_argument("-d", help="Dead mode", action="store_true")
     parser.add_argument("-g", help="Greedy mode", action="store_true")
@@ -51,14 +51,14 @@ if __name__ == '__main__':
     parser.add_argument("-t", help="Tired mode", action="store_true")
     parser.add_argument("-w", help="Somewhat the opposite of -t", action="store_true")
     parser.add_argument("-y", help="Brings on the cow's youthful appearance", action="store_true")
-    parser.add_argument("-W", help="specifies roughly where the message should be wrapped. The default is equivalent to -W 40 i.e. wrap words at or before the 40th column.", type=int)
-    parser.add_argument("-n", help="If it is specified, the given message will not be word-wrapped", action="store_true")
-    parser.add_argument("-l", help="Lists all cows", action="store_true")
-    parser.add_argument("-f", help="Option specifies a particular cow picture file (\"cowfile\") to use. If the cowfile spec contains '/' then it will be interpreted as a path relative to the current directory. Otherwise, cowsay will search cowfile among available options that can be see with -l option", type=str)
+    parser.add_argument("-W", dest="width", help="specifies roughly where the message should be wrapped. The default is equivalent to -W 40 i.e. wrap words at or before the 40th column.", type=int, default=40)
+    parser.add_argument("-n", dest="no_wrap_text", help="If it is specified, the given message will not be word-wrapped", action="store_true")
+    parser.add_argument("-l", dest="list_all_cows", help="Lists all cows", action="store_true")
+    parser.add_argument("-f", dest="cowfile", help="Option specifies a particular cow picture file (\"cowfile\") to use. If the cowfile spec contains '/' then it will be interpreted as a path relative to the current directory. Otherwise, cowsay will search cowfile among available options that can be see with -l option", type=str)
     parser.add_argument("message", type=str, nargs="?")
     args: argparse.Namespace = parser.parse_args()
 
-    if args.l:
+    if args.list_all_cows:
         print("Cow files in cowsay-python:")
         print(*list_cows())
         exit()
@@ -69,11 +69,11 @@ if __name__ == '__main__':
         message = args.message
 
     preset: str = get_preset(args)
-    eyes: str = args.e[:2] if args.e else Option.eyes
-    tongue: str = args.T[:2] if args.T else Option.tongue
-    width: int = args.W if args.W else 40
-    wrap_text: bool = args.n
-    cow, cowfile = get_cow(args.f)
+    eyes: str = args.eyes[:2] if args.eyes else Option.eyes
+    tongue: str = args.tongue[:2] if args.tongue else Option.tongue
+    width: int = args.width
+    wrap_text: bool = args.no_wrap_text
+    cow, cowfile = get_cow(args.cowfile)
 
     print(cowsay(
         message=message,
