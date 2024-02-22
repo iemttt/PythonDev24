@@ -36,7 +36,7 @@ def get_cow(arg: str) -> Tuple[Optional[str], Optional[str]]:
         if cow in list_cows():
             return cow, cowfile
 
-    raise Exception(f"Could not find {arg} cowfile!")
+    raise FileNotFoundError(f"Could not find {arg} cowfile!")
 
 
 if __name__ == '__main__':
