@@ -1,15 +1,42 @@
-from cowsay import cowsay, Option, list_cows
+from cowsay import cowsay, Option, list_cows, read_dot_cow
 
 import argparse
 from sys import stdin
+import os
+import os.path
 
 
 PRESET_OPTIONS = {
     "b", "d", "g", "p", "s", "t", "w", "y"
 }
 
+
 def get_preset(args):
     return "".join(opt for opt in PRESET_OPTIONS if getattr(args, opt, False))
+
+
+def get_cow(arg):
+    cow = "default"
+    cowfile = None
+    
+    if arg is None:
+        return cow, cowfile
+
+    if os.sep in arg:
+        cow = None
+        # arg is a path to cowfile
+        if os.path.exists(arg):
+            with open(arg) as f:
+                cowfile = read_dot_cow(f)
+            return cow, cowfile
+    else:
+        # arg is a cowfile name
+        cow = arg
+        if cow in list_cows():
+            return cow, cowfile
+
+    raise Exception(f"Could not find {arg} cowfile!")
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -26,6 +53,7 @@ if __name__ == '__main__':
     parser.add_argument("-W", help="specifies roughly where the message should be wrapped. The default is equivalent to -W 40 i.e. wrap words at or before the 40th column.", type=int)
     parser.add_argument("-n", help="If it is specified, the given message will not be word-wrapped", action="store_true")
     parser.add_argument("-l", help="Lists all cows", action="store_true")
+    parser.add_argument("-f", help="Option specifies a particular cow picture file (\"cowfile\") to use. If the cowfile spec contains '/' then it will be interpreted as a path relative to the current directory. Otherwise, cowsay will search cowfile among available options that can be see with -l option", type=str)
     parser.add_argument("message", type=str, nargs="?")
     args = parser.parse_args()
 
@@ -44,7 +72,8 @@ if __name__ == '__main__':
     tongue = args.T[:2] if args.T else Option.tongue
     width = args.W if args.W else 40
     wrap_text = args.n
-    
+    cow, cowfile = get_cow(args.f)
+
     print(cowsay(
         message=message,
         preset=preset,
@@ -52,5 +81,7 @@ if __name__ == '__main__':
         tongue=tongue,
         width=width,
         wrap_text=wrap_text,
+        cow=cow,
+        cowfile=cowfile
         )
     )
