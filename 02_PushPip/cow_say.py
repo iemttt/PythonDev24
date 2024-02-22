@@ -4,20 +4,21 @@ import argparse
 from sys import stdin
 import os
 import os.path
+from typing import Optional, Set, Tuple
 
 
-PRESET_OPTIONS = {
+PRESET_OPTIONS: Set[str] = {
     "b", "d", "g", "p", "s", "t", "w", "y"
 }
 
 
-def get_preset(args):
+def get_preset(args: argparse.Namespace):
     return "".join(opt for opt in PRESET_OPTIONS if getattr(args, opt, False))
 
 
-def get_cow(arg):
-    cow = "default"
-    cowfile = None
+def get_cow(arg: str) -> Tuple[Optional[str], Optional[str]]:
+    cow: str = "default"
+    cowfile: str = None
     
     if arg is None:
         return cow, cowfile
@@ -39,7 +40,7 @@ def get_cow(arg):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
+    parser: argparse.ArgumentParser = argparse.ArgumentParser()
     parser.add_argument("-e", help="Select the appearance of the cow's eyes, in which case the first two characters of the argument string will be used", type=str)
     parser.add_argument("-T", help="Select the appearance of the cow's tongue, in which case the first two characters of the argument string will be used", type=str)
     parser.add_argument("-b", help="Borg mode", action="store_true")
@@ -55,7 +56,7 @@ if __name__ == '__main__':
     parser.add_argument("-l", help="Lists all cows", action="store_true")
     parser.add_argument("-f", help="Option specifies a particular cow picture file (\"cowfile\") to use. If the cowfile spec contains '/' then it will be interpreted as a path relative to the current directory. Otherwise, cowsay will search cowfile among available options that can be see with -l option", type=str)
     parser.add_argument("message", type=str, nargs="?")
-    args = parser.parse_args()
+    args: argparse.Namespace = parser.parse_args()
 
     if args.l:
         print("Cow files in cowsay-python:")
@@ -67,11 +68,11 @@ if __name__ == '__main__':
     else:    
         message = args.message
 
-    preset = get_preset(args)
-    eyes = args.e[:2] if args.e else Option.eyes
-    tongue = args.T[:2] if args.T else Option.tongue
-    width = args.W if args.W else 40
-    wrap_text = args.n
+    preset: str = get_preset(args)
+    eyes: str = args.e[:2] if args.e else Option.eyes
+    tongue: str = args.T[:2] if args.T else Option.tongue
+    width: int = args.W if args.W else 40
+    wrap_text: bool = args.n
     cow, cowfile = get_cow(args.f)
 
     print(cowsay(
