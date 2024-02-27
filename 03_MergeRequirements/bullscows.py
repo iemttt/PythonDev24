@@ -1,5 +1,4 @@
-from typing import Tuple, Set
-
+from typing import Tuple, Set, List, Optional
 
 def bullscows(guess: str, secret: str) -> Tuple[int, int]:
     bulls: int = 0
@@ -15,3 +14,9 @@ def bullscows(guess: str, secret: str) -> Tuple[int, int]:
     return bulls, cows
 
 assert(bullscows("ропот", "полип") == (1, 2))
+
+def ask(prompt: str, valid: List[str] = None) -> str:
+    guess: Optional[str] = None
+    while guess is None or (valid is not None and guess not in valid):
+        guess = input(prompt)
+    return guess
