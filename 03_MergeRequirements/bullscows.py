@@ -15,8 +15,13 @@ def bullscows(guess: str, secret: str) -> Tuple[int, int]:
 
 assert(bullscows("ропот", "полип") == (1, 2))
 
+
 def ask(prompt: str, valid: List[str] = None) -> str:
     guess: Optional[str] = None
     while guess is None or (valid is not None and guess not in valid):
         guess = input(prompt)
     return guess
+
+
+def inform(format_string: str, bulls: int, cows: int) -> None:
+    print(format_string.format(bulls, cows))
