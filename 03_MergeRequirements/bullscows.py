@@ -1,5 +1,6 @@
 from typing import Tuple, Set, List, Optional, Callable
 from random import choice
+import argparse
 
 def bullscows(guess: str, secret: str) -> Tuple[int, int]:
     bulls: int = 0
@@ -44,10 +45,9 @@ def gameplay(ask: Callable, inform: Callable, words: List[str]) -> int:
     #Если слово отгадано, возвращает количество попыток — вызовов ask() 
     print("Количество попыток:", tries)
 
-WORDS: List[str] = list(set((
-    "ропот",
-    "полип",
-    "топор"
-)))
 
-gameplay(ask, inform, WORDS)
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("dictionary", type=str)
+    parser.add_argument("length", type=int, nargs="?")
+    args = parser.parse_args()
