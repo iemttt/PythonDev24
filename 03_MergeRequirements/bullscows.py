@@ -46,7 +46,7 @@ def gameplay(ask: Callable, inform: Callable, words: List[str]) -> int:
         #Если слово не отгадано, переходит к п. 1
 
     #Если слово отгадано, возвращает количество попыток — вызовов ask() 
-    print("Количество попыток:", tries)
+    return tries
 
 
 def get_words(url: str, length: int) -> List[str]:
@@ -72,3 +72,5 @@ if __name__ == '__main__':
     parser.add_argument("length", type=int, nargs="?", default=5)
     args = parser.parse_args()
     words: List[str] = get_words(args.dictionary, args.length)
+    tries: int = gameplay(ask, inform, words)
+    print("Количество попыток:", tries)
