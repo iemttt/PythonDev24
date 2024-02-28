@@ -2,6 +2,7 @@ from typing import Tuple, Set, List, Optional, Callable
 from random import choice
 import argparse
 from urllib.parse import urlparse
+from urllib.request import urlretrieve
 
 
 def bullscows(guess: str, secret: str) -> Tuple[int, int]:
@@ -51,10 +52,15 @@ def gameplay(ask: Callable, inform: Callable, words: List[str]) -> int:
 def get_words(url: str) -> List[str]:
     o = urlparse(url)
     words: List[str] = []
+    words_file = None
     if o.scheme == "":
-        with open(url) as f:
-            for l in f.readlines():
-                words.append(l.strip())
+        words_file = url
+    else:
+        words_file, _ = urlretrieve(url)
+
+    with open(words_file) as f:
+        for l in f.readlines():
+            words.append(l.strip())
     return words
 
 
