@@ -1,6 +1,8 @@
 from typing import Tuple, Set, List, Optional, Callable
 from random import choice
 import argparse
+from urllib.parse import urlparse
+
 
 def bullscows(guess: str, secret: str) -> Tuple[int, int]:
     bulls: int = 0
@@ -46,8 +48,19 @@ def gameplay(ask: Callable, inform: Callable, words: List[str]) -> int:
     print("Количество попыток:", tries)
 
 
+def get_words(url: str) -> List[str]:
+    o = urlparse(url)
+    words: List[str] = []
+    if o.scheme == "":
+        with open(url) as f:
+            for l in f.readlines():
+                words.append(l.strip())
+    return words
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("dictionary", type=str)
     parser.add_argument("length", type=int, nargs="?")
     args = parser.parse_args()
+    words: List[str] = get_words(args.dictionary)
