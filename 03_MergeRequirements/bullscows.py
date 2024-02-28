@@ -49,7 +49,7 @@ def gameplay(ask: Callable, inform: Callable, words: List[str]) -> int:
     print("Количество попыток:", tries)
 
 
-def get_words(url: str) -> List[str]:
+def get_words(url: str, length: int) -> List[str]:
     o = urlparse(url)
     words: List[str] = []
     words_file = None
@@ -60,13 +60,15 @@ def get_words(url: str) -> List[str]:
 
     with open(words_file) as f:
         for l in f.readlines():
-            words.append(l.strip())
+            w = l.strip()
+            if len(w) == length:
+                words.append(w)
     return words
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("dictionary", type=str)
-    parser.add_argument("length", type=int, nargs="?")
+    parser.add_argument("length", type=int, nargs="?", default=5)
     args = parser.parse_args()
-    words: List[str] = get_words(args.dictionary)
+    words: List[str] = get_words(args.dictionary, args.length)
