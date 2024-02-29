@@ -4,7 +4,7 @@ import argparse
 from urllib.parse import urlparse
 from urllib.request import urlretrieve
 
-from cowsay import cowsay, get_random_cow
+from cowsay import cowsay, get_random_cow, read_dot_cow
 
 
 def bullscows(guess: str, secret: str) -> Tuple[int, int]:
@@ -26,11 +26,16 @@ assert(bullscows("ропот", "полип") == (1, 2))
 def random_cow_say(message: str) -> str:
     return cowsay(message, cow=get_random_cow()) + '\n'
 
+def thing_say(message: str) -> str:
+    cowfile: str = ""
+    with open("thing.cow") as f:
+        cowfile = read_dot_cow(f)
+    return cowsay(message, cowfile=cowfile) + '\n'
 
 def ask(prompt: str, valid: List[str] = None) -> str:
     guess: Optional[str] = None
     while guess is None or (valid is not None and guess not in valid):
-        guess = input(random_cow_say(prompt))
+        guess = input(thing_say(prompt))
     return guess
 
 
