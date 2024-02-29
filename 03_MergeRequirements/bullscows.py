@@ -4,6 +4,8 @@ import argparse
 from urllib.parse import urlparse
 from urllib.request import urlretrieve
 
+from cowsay import cowsay, get_random_cow
+
 
 def bullscows(guess: str, secret: str) -> Tuple[int, int]:
     bulls: int = 0
@@ -21,15 +23,19 @@ def bullscows(guess: str, secret: str) -> Tuple[int, int]:
 assert(bullscows("ропот", "полип") == (1, 2))
 
 
+def random_cow_say(message: str) -> str:
+    return cowsay(message, cow=get_random_cow()) + '\n'
+
+
 def ask(prompt: str, valid: List[str] = None) -> str:
     guess: Optional[str] = None
     while guess is None or (valid is not None and guess not in valid):
-        guess = input(prompt)
+        guess = input(random_cow_say(prompt))
     return guess
 
 
 def inform(format_string: str, bulls: int, cows: int) -> None:
-    print(format_string.format(bulls, cows))
+    print(random_cow_say(format_string.format(bulls, cows)))
 
 
 def gameplay(ask: Callable, inform: Callable, words: List[str]) -> int:
