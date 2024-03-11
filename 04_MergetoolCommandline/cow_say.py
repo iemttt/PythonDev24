@@ -66,6 +66,34 @@ def parseCowOptions(arg):
             next_is_arg = False
     return opt
 
+
+def opt_completer(text, line, begidx, endidx):
+    EYES = [Option.eyes, "@@", "aa", "TT"]
+    TONGUE = [Option.tongue, "vv", "u", "U"]
+    COWS = list_cows()
+    cowsay_opts = {
+        "-e": EYES,
+        "-t": TONGUE,
+        "-c": COWS
+    }
+    cowthink_opts = cowsay_opts
+    make_bubble_opts = {
+        "-b": ["cowsay", "cowthink"],
+    }
+    all_opts = {
+        "cowsay": cowsay_opts,
+        "cowthink": cowthink_opts,
+        "make_bubble": make_bubble_opts
+    }
+    args = shlex.split(line)
+    command = args[0]
+    if begidx == endidx:
+        opt = args[-1]
+    else:
+        opt = args[-2]
+    return [s for s in all_opts[command][opt] if s.startswith(text)]
+
+
 class CowSay(cmd.Cmd):
     prompt = "CowSay>"
 
@@ -79,6 +107,9 @@ class CowSay(cmd.Cmd):
                 cow=opt["cow"],
             )
         )
+    
+    def complete_cowsay(self, text, line, begidx, endidx):
+        return opt_completer(text, line, begidx, endidx)
 
     def do_cowthink(self, arg):
         opt = parseCowOptions(arg)
@@ -90,6 +121,10 @@ class CowSay(cmd.Cmd):
                 cow=opt["cow"],
             )
         )
+    
+    def complete_cowthink(self, text, line, begidx, endidx):
+        return opt_completer(text, line, begidx, endidx)
+
 
     def do_list_cows(self, _):
         print(*list_cows())
@@ -131,6 +166,10 @@ class CowSay(cmd.Cmd):
                 wrap_text=wrap_text
             )
         )
+    
+    def complete_make_bubble(self, text, line, begidx, endidx):
+        return opt_completer(text, line, begidx, endidx)
+
 
 
 if __name__ == '__main__':
