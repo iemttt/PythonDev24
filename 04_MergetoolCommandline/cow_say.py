@@ -41,36 +41,42 @@ def get_cow(arg: str) -> Tuple[Optional[str], Optional[str]]:
     raise FileNotFoundError(f"Could not find {arg} cowfile!")
 
 
+def parseCowOptions(arg):
+    args = shlex.split(arg)
+    next_is_arg = False
+    opt = {
+        "message": arg[0],
+        "eyes": Option.eyes,
+        "tongue": Option.tongue,
+        "cow": "default",
+    }
+    for i, a in enumerate(args):
+        if a == "-e":
+            opt["eyes"] = args[i+1]
+            next_is_arg = True
+        elif a == "-t":
+            opt["tongue"] = args[i+1]
+            next_is_arg = True
+        elif a == "-c":
+            opt["cow"] = args[i+1]
+            next_is_arg = True
+        else:
+            if not next_is_arg:
+                opt["message"] = a
+            next_is_arg = False
+    return opt
+
 class CowSay(cmd.Cmd):
     prompt = "CowSay>"
 
     def do_cowsay(self, arg):
-        eyes = Option.eyes
-        tongue = Option.tongue
-        cow = "default"
-        args = shlex.split(arg)
-        next_is_arg = False
-        message = args[0]
-        for i, a in enumerate(args):
-            if a == "-e":
-                eyes = args[i+1]
-                next_is_arg = True
-            elif a == "-t":
-                tongue = args[i+1]
-                next_is_arg = True
-            elif a == "-c":
-                cow = args[i+1]
-                next_is_arg = True
-            else:
-                if not next_is_arg:
-                    message = a
-                next_is_arg = False
+        opt = parseCowOptions(arg)
         print(
             cowsay(
-                message=message,
-                eyes=eyes,
-                tongue=tongue,
-                cow=cow,
+                message=opt["message"],
+                eyes=opt["eyes"],
+                tongue=opt["tongue"],
+                cow=opt["cow"],
             )
         )
 
