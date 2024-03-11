@@ -1,4 +1,4 @@
-from cowsay import cowsay, Option, list_cows, read_dot_cow
+from cowsay import cowsay, Option, list_cows, read_dot_cow, make_bubble, THOUGHT_OPTIONS
 
 import argparse
 from sys import stdin
@@ -7,6 +7,7 @@ import os.path
 from typing import Optional, Set, Tuple
 
 import cmd
+import shlex
 
 PRESET_OPTIONS: Set[str] = {
     "b", "d", "g", "p", "s", "t", "w", "y"
@@ -46,8 +47,46 @@ class CowSay(cmd.Cmd):
     def do_cowsay(self, arg):
         print(cowsay(arg))
 
-    def do_list_cows(self, arg):
+    def do_list_cows(self, _):
         print(*list_cows())
+    
+    def do_make_bubble(self, arg):
+        args = shlex.split(arg)
+        brackets_options = ["cowsay", "cowthink"]
+        brackets = "cowsay"
+        width = 40
+        wrap_text = True
+        message = arg[0]
+        next_is_arg = False
+        for i, a in enumerate(args):
+            if a == "-b":
+                if args[i+1] in brackets_options:
+                    brackets = args[i+1]
+                else:
+                    print(f"-b options: {shlex.quote(shlex.join(brackets_options))}")
+                    return
+                next_is_arg = True
+            elif a == "-w":
+                try:
+                    width = int(args[i+1])
+                except ValueError:
+                    print("-w needs integer value")
+                    return
+                next_is_arg = True
+            elif a == "-n":
+                wrap_text == False
+            else:
+                message = a
+                next_is_arg = False
+        print(
+            make_bubble(
+                message,
+                brackets=THOUGHT_OPTIONS[brackets],
+                width=width,
+                wrap_text=wrap_text
+            )
+        )
+
 
 if __name__ == '__main__':
     CowSay().cmdloop()
