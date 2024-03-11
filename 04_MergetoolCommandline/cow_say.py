@@ -45,7 +45,34 @@ class CowSay(cmd.Cmd):
     prompt = "CowSay>"
 
     def do_cowsay(self, arg):
-        print(cowsay(arg))
+        eyes = Option.eyes
+        tongue = Option.tongue
+        cow = "default"
+        args = shlex.split(arg)
+        next_is_arg = False
+        message = args[0]
+        for i, a in enumerate(args):
+            if a == "-e":
+                eyes = args[i+1]
+                next_is_arg = True
+            elif a == "-t":
+                tongue = args[i+1]
+                next_is_arg = True
+            elif a == "-c":
+                cow = args[i+1]
+                next_is_arg = True
+            else:
+                if not next_is_arg:
+                    message = a
+                next_is_arg = False
+        print(
+            cowsay(
+                message=message,
+                eyes=eyes,
+                tongue=tongue,
+                cow=cow,
+            )
+        )
 
     def do_list_cows(self, _):
         print(*list_cows())
