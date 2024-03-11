@@ -1,10 +1,4 @@
-from cowsay import cowsay, cowthink, Option, list_cows, read_dot_cow, make_bubble, THOUGHT_OPTIONS
-
-import argparse
-from sys import stdin
-import os
-import os.path
-from typing import Optional, Set, Tuple
+from cowsay import cowsay, cowthink, Option, list_cows, make_bubble, THOUGHT_OPTIONS
 
 import cmd
 import shlex
