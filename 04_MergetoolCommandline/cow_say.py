@@ -103,7 +103,8 @@ class CowSay(cmd.Cmd):
             elif a == "-n":
                 wrap_text == False
             else:
-                message = a
+                if not next_is_arg:
+                    message = a
                 next_is_arg = False
         print(
             make_bubble(
