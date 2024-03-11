@@ -6,6 +6,7 @@ import os
 import os.path
 from typing import Optional, Set, Tuple
 
+import cmd
 
 PRESET_OPTIONS: Set[str] = {
     "b", "d", "g", "p", "s", "t", "w", "y"
@@ -39,7 +40,15 @@ def get_cow(arg: str) -> Tuple[Optional[str], Optional[str]]:
     raise FileNotFoundError(f"Could not find {arg} cowfile!")
 
 
+class CowSay(cmd.Cmd):
+    prompt = "CowSay>"
+
+    def do_cowsay(self, arg):
+        print(cowsay(arg))
+
 if __name__ == '__main__':
+    CowSay().cmdloop()
+
     parser: argparse.ArgumentParser = argparse.ArgumentParser()
     parser.add_argument("-e", dest="eyes", help="Select the appearance of the cow's eyes, in which case the first two characters of the argument string will be used", type=str)
     parser.add_argument("-T", dest="tongue", help="Select the appearance of the cow's tongue, in which case the first two characters of the argument string will be used", type=str)
