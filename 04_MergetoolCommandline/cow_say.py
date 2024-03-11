@@ -46,6 +46,9 @@ class CowSay(cmd.Cmd):
     def do_cowsay(self, arg):
         print(cowsay(arg))
 
+    def do_list_cows(self, arg):
+        print(*list_cows())
+
 if __name__ == '__main__':
     CowSay().cmdloop()
 
