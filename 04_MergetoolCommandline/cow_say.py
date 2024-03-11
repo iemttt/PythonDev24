@@ -3,6 +3,7 @@ from cowsay import cowsay, cowthink, Option, list_cows, make_bubble, THOUGHT_OPT
 import cmd
 import shlex
 
+
 def parseCowOptions(arg):
     args = shlex.split(arg)
     next_is_arg = False
@@ -57,9 +58,17 @@ def opt_completer(text, line, begidx, endidx):
 
 
 class CowSay(cmd.Cmd):
+    '''
+    Cowsay in command line
+    '''
     prompt = "CowSay>"
 
     def do_cowsay(self, arg):
+        '''
+        cowsay message [-e eye_string] [-t tongue_string] [-c cow]
+        
+        Print cow says your message
+        '''
         opt = parseCowOptions(arg)
         print(
             cowsay(
@@ -74,6 +83,11 @@ class CowSay(cmd.Cmd):
         return opt_completer(text, line, begidx, endidx)
 
     def do_cowthink(self, arg):
+        '''
+        cowthink message [-e eye_string] [-t tongue_string] [-c cow]
+        
+        Print cow thinking about your message
+        '''
         opt = parseCowOptions(arg)
         print(
             cowthink(
@@ -89,9 +103,21 @@ class CowSay(cmd.Cmd):
 
 
     def do_list_cows(self, _):
+        '''
+        list_cows prints all cow options
+        '''
         print(*list_cows())
     
     def do_make_bubble(self, arg):
+        '''
+        make_bubble message [-b <brackets>] [-w width] [-n]
+        
+        Print message in bubble
+        
+        -b can be only "cowsay" or "cowthink
+        -w needs integer value
+        -n flag to not wrap text
+        '''
         args = shlex.split(arg)
         brackets_options = ["cowsay", "cowthink"]
         brackets = "cowsay"
@@ -131,7 +157,6 @@ class CowSay(cmd.Cmd):
     
     def complete_make_bubble(self, text, line, begidx, endidx):
         return opt_completer(text, line, begidx, endidx)
-
 
 
 if __name__ == '__main__':
