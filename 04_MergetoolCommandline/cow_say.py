@@ -1,4 +1,4 @@
-from cowsay import cowsay, Option, list_cows, read_dot_cow, make_bubble, THOUGHT_OPTIONS
+from cowsay import cowsay, cowthink, Option, list_cows, read_dot_cow, make_bubble, THOUGHT_OPTIONS
 
 import argparse
 from sys import stdin
@@ -73,6 +73,17 @@ class CowSay(cmd.Cmd):
         opt = parseCowOptions(arg)
         print(
             cowsay(
+                message=opt["message"],
+                eyes=opt["eyes"],
+                tongue=opt["tongue"],
+                cow=opt["cow"],
+            )
+        )
+
+    def do_cowthink(self, arg):
+        opt = parseCowOptions(arg)
+        print(
+            cowthink(
                 message=opt["message"],
                 eyes=opt["eyes"],
                 tongue=opt["tongue"],
