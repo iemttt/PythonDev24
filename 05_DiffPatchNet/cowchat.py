@@ -88,6 +88,14 @@ async def chat(reader, writer):
                             await clients[me].queue.put(f"ERROR: user {login} is not logged.")
                             continue
                         await client.queue.put(cowsay.cowsay(text, cow=clients[me].login))
+                    case "yield":
+                        if len(command) != 2:
+                            await clients[me].queue.put("ERROR: \"say\" command needs text")
+                            continue
+                        text = command[1]
+                        for peer in clients:
+                            if peer != me:
+                                await clients[peer].queue.put(cowsay.cowsay(text, cow=clients[me].login))
 
             elif q is receive:
                 receive = asyncio.create_task(clients[me].queue.get())
