@@ -16,6 +16,11 @@ clients = {}
 def all_logins():
     return [c.login for c in clients.values() if c.login is not None]
 
+def free_cows():
+    logins = all_logins()
+    return [cow for cow in cowsay.list_cows() if cow not in logins]
+
+
 def check_login(peer, login):
     if clients[peer].login == login:
         return False, f"You are already logged as \"{login}\""
@@ -59,6 +64,12 @@ async def chat(reader, writer):
                             await clients[me].queue.put("ERROR: \"who\" command doesn't need arguments")
                             continue
                         await clients[me].queue.put(f"Logged users: {', '.join(all_logins())}")
+                    case "cows":
+                        if len(command) != 1:
+                            await clients[me].queue.put("ERROR: \"cows\" command doesn't need arguments")
+                            continue
+                        await clients[me].queue.put(f"Free cows: {', '.join(free_cows())}")
+
             elif q is receive:
                 receive = asyncio.create_task(clients[me].queue.get())
                 writer.write(f"{q.result()}\n".encode())
