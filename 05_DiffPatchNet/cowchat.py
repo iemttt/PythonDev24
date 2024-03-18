@@ -13,12 +13,14 @@ class Client():
 
 clients = {}
 
+def all_logins():
+    return [c.login for c in clients.values() if c.login is not None]
 
 def check_login(peer, login):
     if clients[peer].login == login:
         return False, f"You are already logged as \"{login}\""
     if login in cowsay.list_cows():
-        if login not in [c.login for c in clients.values()]:
+        if login not in all_logins():
             return True, None
         return False, f"\"{login}\" is already taken"
     return False, "login must be cow's name"
@@ -50,6 +52,11 @@ async def chat(reader, writer):
                         print(clients)
                         for peer in clients:
                             await clients[peer].queue.put(f"{login} is connected")
+                    case "who":
+                        if len(command) != 1:
+                            await clients[me].queue.put("ERROR: \"who\" command doesn't need arguments")
+                            continue
+                        await clients[me].queue.put(f"Logged users: {', '.join(all_logins())}")
             elif q is receive:
                 receive = asyncio.create_task(clients[me].queue.get())
                 writer.write(f"{q.result()}\n".encode())
