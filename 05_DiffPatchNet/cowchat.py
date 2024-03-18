@@ -104,7 +104,7 @@ async def chat(reader, writer):
                             continue
                         text = command[1]
                         for peer in clients:
-                            if peer != me:
+                            if peer != me and is_logged(peer):
                                 await clients[peer].queue.put(cowsay.cowsay(text, cow=clients[me].login))
                     case "quit":
                         logged_out = True
