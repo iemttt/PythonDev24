@@ -56,7 +56,7 @@ async def chat(reader, writer):
                 match command[0]:
                     case "login":
                         if len(command) != 2:
-                            await clients[me].queue.put("ERROR: login command need only one argument: cow's name")
+                            await clients[me].queue.put("ERROR: \"login\" command need only one argument: cow's name")
                             continue
                         login = command[1]
                         ok, err = check_login(me, login)
@@ -107,6 +107,9 @@ async def chat(reader, writer):
                             if peer != me and is_logged(peer):
                                 await clients[peer].queue.put(cowsay.cowsay(text, cow=clients[me].login))
                     case "quit":
+                        if len(command) != 1:
+                            await clients[me].queue.put("ERROR: \"quit\" command doesn't need arguments")
+                            continue
                         logged_out = True
                         continue
 
