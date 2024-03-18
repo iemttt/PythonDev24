@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import asyncio
-
+import cowsay
 
 class Client():
     def __init__(self, peername):
@@ -8,7 +8,21 @@ class Client():
         self.queue = asyncio.Queue()
         self.login = None
 
+    def __repr__(self):
+        return f"{self.peername} {self.login}"
+
 clients = {}
+
+
+def check_login(peer, login):
+    if clients[peer].login == login:
+        return False, f"You are already logged as \"{login}\""
+    if login in cowsay.list_cows():
+        if login not in [c.login for c in clients.values()]:
+            return True, None
+        return False, f"\"{login}\" is already taken"
+    return False, "login must be cow's name"
+
 
 async def chat(reader, writer):
     me = "{}:{}".format(*writer.get_extra_info('peername'))
@@ -18,13 +32,24 @@ async def chat(reader, writer):
     receive = asyncio.create_task(clients[me].queue.get())
     while not reader.at_eof():
         done, pending = await asyncio.wait([send, receive], return_when=asyncio.FIRST_COMPLETED)
-        print(done)
         for q in done:
             if q is send:
                 send = asyncio.create_task(reader.readline())
-                for peer in clients:
-                    if peer is not me:
-                        await clients[peer].queue.put(f"{me} {q.result().decode().strip()}")
+                command = q.result().decode().strip().split()
+                match command[0]:
+                    case "login":
+                        if len(command) != 2:
+                            await clients[me].queue.put("ERROR: login command need only one argument: cow's name")
+                            continue
+                        login = command[1]
+                        ok, err = check_login(me, login)
+                        if not ok:
+                            await clients[me].queue.put(f"ERROR: {err}")
+                            continue
+                        clients[me].login = login
+                        print(clients)
+                        for peer in clients:
+                            await clients[peer].queue.put(f"{login} is connected")
             elif q is receive:
                 receive = asyncio.create_task(clients[me].queue.get())
                 writer.write(f"{q.result()}\n".encode())
