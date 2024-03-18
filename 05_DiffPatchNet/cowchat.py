@@ -16,6 +16,9 @@ clients = {}
 def all_logins():
     return [c.login for c in clients.values() if c.login is not None]
 
+def is_logged(peer):
+    return clients[peer].login is not None
+
 def free_cows():
     logins = all_logins()
     return [cow for cow in cowsay.list_cows() if cow not in logins]
@@ -74,6 +77,9 @@ async def chat(reader, writer):
                             continue
                         await clients[me].queue.put(f"Free cows: {', '.join(free_cows())}")
                     case "say":
+                        if not is_logged(me):
+                            await clients[me].queue.put("ERROR:you are not logged")
+                            continue
                         if len(command) != 2:
                             await clients[me].queue.put("ERROR: \"say\" command needs reciever login and text")
                             continue
@@ -89,6 +95,9 @@ async def chat(reader, writer):
                             continue
                         await client.queue.put(cowsay.cowsay(text, cow=clients[me].login))
                     case "yield":
+                        if not is_logged(me):
+                            await clients[me].queue.put("ERROR:you are not logged")
+                            continue
                         if len(command) != 2:
                             await clients[me].queue.put("ERROR: \"say\" command needs text")
                             continue
