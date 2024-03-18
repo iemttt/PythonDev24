@@ -20,6 +20,10 @@ def free_cows():
     logins = all_logins()
     return [cow for cow in cowsay.list_cows() if cow not in logins]
 
+def get_client_by_login(login):
+    for client in clients.values():
+        if client.login == login:
+            return client
 
 def check_login(peer, login):
     if clients[peer].login == login:
@@ -42,7 +46,7 @@ async def chat(reader, writer):
         for q in done:
             if q is send:
                 send = asyncio.create_task(reader.readline())
-                command = q.result().decode().strip().split()
+                command = q.result().decode().strip().split(maxsplit=1)
                 if len(command) == 0:
                     continue
                 match command[0]:
@@ -69,6 +73,21 @@ async def chat(reader, writer):
                             await clients[me].queue.put("ERROR: \"cows\" command doesn't need arguments")
                             continue
                         await clients[me].queue.put(f"Free cows: {', '.join(free_cows())}")
+                    case "say":
+                        if len(command) != 2:
+                            await clients[me].queue.put("ERROR: \"say\" command needs reciever login and text")
+                            continue
+                        args = command[1].split(maxsplit=1)
+                        if len(args) != 2:
+                            await clients[me].queue.put("ERROR: \"say\" command needs reciever login and text")
+                            continue
+                        login = args[0]
+                        text = args[1]
+                        client = get_client_by_login(login)
+                        if client is None:    
+                            await clients[me].queue.put(f"ERROR: user {login} is not logged.")
+                            continue
+                        await client.queue.put(cowsay.cowsay(text, cow=clients[me].login))
 
             elif q is receive:
                 receive = asyncio.create_task(clients[me].queue.get())
