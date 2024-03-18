@@ -38,6 +38,8 @@ async def chat(reader, writer):
             if q is send:
                 send = asyncio.create_task(reader.readline())
                 command = q.result().decode().strip().split()
+                if len(command) == 0:
+                    continue
                 match command[0]:
                     case "login":
                         if len(command) != 2:
