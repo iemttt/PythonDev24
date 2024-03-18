@@ -44,7 +44,8 @@ async def chat(reader, writer):
     clients[me] = Client(me)
     send = asyncio.create_task(reader.readline())
     receive = asyncio.create_task(clients[me].queue.get())
-    while not reader.at_eof():
+    logged_out = False
+    while not reader.at_eof() and not logged_out:
         done, pending = await asyncio.wait([send, receive], return_when=asyncio.FIRST_COMPLETED)
         for q in done:
             if q is send:
@@ -105,11 +106,15 @@ async def chat(reader, writer):
                         for peer in clients:
                             if peer != me:
                                 await clients[peer].queue.put(cowsay.cowsay(text, cow=clients[me].login))
+                    case "quit":
+                        logged_out = True
+                        continue
 
             elif q is receive:
                 receive = asyncio.create_task(clients[me].queue.get())
                 writer.write(f"{q.result()}\n".encode())
                 await writer.drain()
+
     send.cancel()
     receive.cancel()
     print(me, "DONE")
